@@ -6,20 +6,22 @@ pipeline {
     }
 
     stages {
-        stage('Build Redis Cluster') {
+        stage('Start Redis Cluster') {
             steps {
-                sh '''
-                docker-compose -f docker-compose.yml up -d
-                sleep 10
-                docker exec redis-cluster redis-cli -c -a redis init
-                '''
+                dir("${PROJECT_DIR}") {
+                    sh '''
+                    docker-compose up -d
+                    '''
+                }
             }
         }
 
-        stage('Check Cluster') {
+        stage('Check Containers') {
             steps {
-                sh 'docker ps'
-                sh 'docker logs redis-cluster'
+                dir("${PROJECT_DIR}") {
+                    sh 'docker ps'
+                    sh 'docker logs redis-master'
+                }
             }
         }
     }
